@@ -155,9 +155,9 @@ public class ViewController implements Initializable {
         menuLoadGROOLS_dump.setOnAction( event -> {
             final FileChooser fileChooser = new FileChooser();
             // Set extension filter
-            final FileChooser.ExtensionFilter csvFilter =  new FileChooser.ExtensionFilter("GROOLS files (*.grools)", "*.grools");
+            final FileChooser.ExtensionFilter groolsFilter =  new FileChooser.ExtensionFilter("GROOLS files (*.grools)", "*.grools");
             fileChooser.getExtensionFilters()
-                       .add(csvFilter);
+                       .add(groolsFilter);
             fileChooser.setTitle( "Select GROOLS dump file" );
             final File      groolsDump  = fileChooser.showOpenDialog( primaryStage );
             final Reasoner  reasoner    = loadGROOLS_Dump( groolsDump );

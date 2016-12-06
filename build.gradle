@@ -15,7 +15,6 @@ dependencies {
 }
 
 javafx {
-    javaRuntime = '/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b16.fc23.x86_64/'
     appID       'GROOLSDesktop'
     appName     'GROOLS Desktop'
     mainClass   'fr.cea.ig.grools.desktop.Main'// Keystore credentials for signing JAR
