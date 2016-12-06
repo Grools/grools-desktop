@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.collections.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.collections.FXCollections?>
+
+<StackPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+    <VBox maxHeight="+Infinity" maxWidth="+Infinity" minHeight="-Infinity" prefWidth="400.0" spacing="7.0">
+         <children>
+        <Label fx:id="labelHeader" alignment="CENTER" text="GROOLS configuration" textAlignment="CENTER" wrapText="true">
+          <font>
+            <Font name="System Bold" size="13.0" />
+          </font>
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+        </Label>
+            <GridPane hgap="5.0" vgap="5.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+                  <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="Prior-knowledge graph">
+                     <GridPane.margin>
+                        <Insets left="5.0" />
+                     </GridPane.margin></Label>
+                  <Label text="Reasoning mode" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="5.0" />
+                     </GridPane.margin></Label>
+                  <Button fx:id="buttonCancel" mnemonicParsing="false" text="Cancel" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" top="30.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Button fx:id="buttonStart" disable="true" mnemonicParsing="false" text="Start" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                     <GridPane.margin>
+                        <Insets bottom="10.0" top="30.0" />
+                     </GridPane.margin></Button>
+                  <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <RadioButton fx:id="radioButtonNormal" mnemonicParsing="false" selected="true" text="Normal">
+                           <VBox.margin>
+                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                           </VBox.margin>
+                           <toggleGroup>
+                              <ToggleGroup fx:id="reasonerMode" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton fx:id="radioButtonFalsehood" mnemonicParsing="false" text="Falsehood" toggleGroup="$reasonerMode">
+                           <VBox.margin>
+                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                           </VBox.margin>
+                        </RadioButton>
+                        <CheckBox fx:id="checkBoxSpecific" mnemonicParsing="false" text="specific">
+                           <VBox.margin>
+                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <CheckBox fx:id="checkBoxDispensable" mnemonicParsing="false" text="dispensable">
+                           <VBox.margin>
+                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                     </children>
+                     <GridPane.margin>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                     </GridPane.margin>
+                  </VBox>
+                  <ComboBox fx:id="comboBoxPriorKnowledgeGraph" prefWidth="150.0" GridPane.columnIndex="1">
+                          <items>
+                              <FXCollections fx:factory="observableArrayList">
+                                  <String fx:value="Genome Properties" />
+                                  <String fx:value="Unipathway" />
+                                  <String fx:value="From external file" />
+                              </FXCollections></items>
+                   </ComboBox>
+                  <Label text="Observations file" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets left="5.0" />
+                     </GridPane.margin>
+                  </Label>
+                  <Button fx:id="buttonOpenObservationsFile" mnemonicParsing="false" text="Open" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                     </GridPane.margin>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </GridPane>
+         </children>
+    </VBox>
+   </children>
+</StackPane>

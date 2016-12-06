@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.CheckMenuItem?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <MenuBar fx:id="menuBar" VBox.vgrow="NEVER">
+        <menus>
+          <Menu fx:id="menuFile" mnemonicParsing="false" text="File">
+            <items>
+                  <Menu fx:id="menuLoad" mnemonicParsing="false" text="Load">
+                     <items>
+                        <MenuItem fx:id="menuLoadObservations" mnemonicParsing="false" text="Observations" />
+                        <MenuItem fx:id="menuLoadGROOLS_dump" mnemonicParsing="false" text="GROOLS dump" />
+                     </items>
+                  </Menu>
+              <MenuItem fx:id="menuItemClose" mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu fx:id="menuAnalyze" mnemonicParsing="false" text="Analyze">
+            <items>
+                  <MenuItem fx:id="menuItemStartReasoning" mnemonicParsing="false" text="Start reasoning" />
+            </items>
+          </Menu>
+            <Menu fx:id="menuHelp" mnemonicParsing="false" text="Help">
+               <items>
+                  <MenuItem fx:id="menuItemPreference" mnemonicParsing="false" text="Preference" />
+                  <MenuItem fx:id="menuItemAbout" mnemonicParsing="false" text="About" />
+               </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+      <SplitPane fx:id="mainSlpitPane" dividerPositions="0.5" VBox.vgrow="ALWAYS">
+         <items>
+            <StackPane fx:id="paneLeft" maxWidth="-Infinity" prefWidth="120.0" />
+            <TabPane fx:id="paneRight" tabClosingPolicy="ALL_TABS" />
+         </items>
+      </SplitPane>
+      <HBox spacing="5.0" VBox.vgrow="NEVER">
+         <padding>
+            <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+         </padding>
+         <children>
+            <Label fx:id="labelLeftStatus" maxHeight="1.7976931348623157E308" text="left status" HBox.hgrow="ALWAYS" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Label fx:id="labelRightStatus" text="right status" HBox.hgrow="NEVER" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

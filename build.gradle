@@ -1,0 +1,38 @@
+group 'fr.cea.ig.grools'
+version '1.0-SNAPSHOT'
+apply from: 'http://dl.bintray.com/content/shemnon/javafx-gradle/8.1.1/javafx.plugin'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile     group: 'fr.cea.ig'          , name: 'grools-reasoner'   , version: '1.0.0'
+    compile     group: 'fr.cea.ig'          , name: 'bio-scribe'        , version: '0.3.0'
+    compile     group: 'org.projectlombok'  , name: 'lombok'            , version: '1.16.6'
+    testCompile group: 'junit'              , name: 'junit'             , version: '4.11'
+}
+
+javafx {
+    javaRuntime = '/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.111-1.b16.fc23.x86_64/'
+    appID       'GROOLSDesktop'
+    appName     'GROOLS Desktop'
+    mainClass   'fr.cea.ig.grools.desktop.Main'// Keystore credentials for signing JAR
+    // JVM arguments, system properties, application command line arguments
+    jvmArgs = ['-XX:+AggressiveOpts', '-XX:CompileThreshold=1']
+    systemProperties = ['prism.disableRegionCaching':'true']
+arguments = ['-l', '--fast']
+    // Generate key: keytool -genkey -alias release -keyalg RSA -keystore keystore.jks -keysize 2048
+//    releaseKey {
+//        alias = 'release'
+//        keyPass = getProjectProperty('keyStorePassword')
+//        keyStore = file("${System.properties['user.home']}/keystore/keystore.jks")
+//        storePass = getProjectProperty('storePassword')
+//    }
+//    signingMode 'release'
+}
+
+String getProjectProperty(String propertyName) {
+    project.hasProperty(propertyName) ? project.property(propertyName) : null
+}
