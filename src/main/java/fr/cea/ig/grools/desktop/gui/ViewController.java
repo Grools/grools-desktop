@@ -2,24 +2,32 @@ package fr.cea.ig.grools.desktop.gui;
 
 
 import fr.cea.ig.grools.desktop.Tools;
+import fr.cea.ig.grools.fact.Concept;
+import fr.cea.ig.grools.fact.PriorKnowledge;
+import fr.cea.ig.grools.fact.Relation;
+import fr.cea.ig.grools.logic.Conclusion;
 import fr.cea.ig.grools.reasoner.ConceptGraph;
 import fr.cea.ig.grools.reasoner.Mode;
 import fr.cea.ig.grools.reasoner.Reasoner;
 import fr.cea.ig.grools.reasoner.ReasonerImpl;
 import fr.cea.ig.grools.reasoner.Verbosity;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -33,7 +41,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ViewController implements Initializable {
     @Getter
@@ -99,6 +115,49 @@ public class ViewController implements Initializable {
     
     @FXML
     private Label labelLeftStatus;
+
+    private final Map<Tab,ResultTabContainer> tabContainerMap = new HashMap<>(  );
+
+
+    private static Map<String,Float> subGraphStat( @NonNull final Concept concept, @NonNull final Reasoner reasoner ){
+        final Set<Relation> relations = reasoner.getSubGraph( concept );
+        final Set<PriorKnowledge> priorKnowledges = relations.stream()
+                                                             .map( rel -> Arrays.asList( rel.getSource( ), rel.getTarget( ) ) )
+                                                             .flatMap( Collection::stream )
+                                                             .filter(    c -> c instanceof PriorKnowledge )
+                                                             .map(       c -> (PriorKnowledge)c )
+                                                             .collect( Collectors.toSet() );
+        final Map<String,Float> stats = new TreeMap<>(  );
+
+        final Set<PriorKnowledge> sources = relations.stream( )
+                                                     .filter( relation -> relation.getSource() instanceof PriorKnowledge )
+                                                     .filter( relation -> relation.getTarget() instanceof PriorKnowledge )
+                                                     .map(    relation -> ( PriorKnowledge ) relation.getSource() )
+                                                     .collect( Collectors.toSet( ) );
+
+
+        stats.put( "nb concepts", ( float ) priorKnowledges.size( ) );
+
+        final Set<PriorKnowledge> targets = relations.stream( )
+                                                     .filter( relation -> relation.getSource() instanceof PriorKnowledge )
+                                                     .filter( relation -> relation.getTarget() instanceof PriorKnowledge )
+                                                     .map(    relation -> ( PriorKnowledge ) relation.getTarget() )
+                                                     .collect( Collectors.toSet( ) );
+
+        final Set<PriorKnowledge> leaves = priorKnowledges.stream()
+                                                          .filter( pk -> sources.contains( pk ) )
+                                                          .filter( pk -> !targets.contains( pk ) )
+                                                          .collect( Collectors.toSet( ) );
+
+
+        stats.put( "nb leaf concepts", ( float ) leaves.size( ) );
+        Map<Conclusion, Long> conclusionsStats = leaves.stream( )
+                                                       .map( leaf -> leaf.getConclusion() )
+                                                       .collect(Collectors.groupingBy( Function.identity( ), Collectors.counting( ) ) );
+        conclusionsStats.forEach( (k,v) -> stats.put( k.toString(), v.floatValue() ) );
+
+        return stats;
+    }
     
     private static Reasoner loadGROOLS_Dump( @NonNull final File file ) {
     Reasoner              reasoner = null;
@@ -161,7 +220,8 @@ public class ViewController implements Initializable {
             fileChooser.setTitle( "Select GROOLS dump file" );
             final File      groolsDump  = fileChooser.showOpenDialog( primaryStage );
             final Reasoner  reasoner    = loadGROOLS_Dump( groolsDump );
-            final ResultTabController resultTabController = new ResultTabController( primaryStage, paneRight, reasoner );
+            final ResultTabContainer resultTabController = new ResultTabContainer( primaryStage, paneRight, reasoner );
+            tabContainerMap.put( resultTabController.getTab(), resultTabController  );
         } );
         menuItemPreference.setOnAction( event -> {
             final Stage                preferenceStage = new Stage();
@@ -185,5 +245,50 @@ public class ViewController implements Initializable {
             analyzeDialogBoxStage.showAndWait();
         } );
         menuItemClose.setOnAction( event -> { primaryStage.close(); } );
+
+        paneRight.getSelectionModel().selectedItemProperty().addListener( (obs,sourceTab,targetTab) -> {
+            final ResultTabContainer result = tabContainerMap.get( targetTab );
+            System.out.println("recupere onglet courant" );
+            if( result != null ){
+                final Reasoner reasoner = result.getReasoner();
+                System.out.println( "recupere raisoneur" );
+                final TreeTableView.TreeTableViewSelectionModel< PriorKnowledgeRow > model = result.getTableView( ).getSelectionModel( );
+                System.out.println( model != null );
+                if( model != null ) {
+                    model.selectedItemProperty().addListener( (observableValue,oldValue,newValue) ->{
+                        System.out.println( "click" );
+                        final ObservableList< TreeItem< PriorKnowledgeRow > > selectedItems = model.getSelectedItems( );
+                        final Map< String, Map< String, Float > > stats = selectedItems.stream( )
+                                                                                       .map( ti -> ti.getValue( ).getName( ) )
+                                                                                       .map( name -> reasoner.getConcept( name ) )
+                                                                                       .collect( HashMap< String, Map< String, Float > >::new,
+                                                                                                 ( m, c ) -> m.put( c.getName( ), subGraphStat( c, reasoner ) ),
+                                                                                                 ( m, u ) -> {
+                                                                                                 } );
+                        paneLeft.getChildren( ).clear( );
+                        final VBox vBoxRoot = new VBox( );
+                        for ( final Map.Entry< String, Map< String, Float > > entry : stats.entrySet( ) ) {
+                            final VBox vBox = new VBox( );
+                            final HBox hBox = new HBox( );
+                            final Label conceptLabel = new Label( entry.getKey( ) );
+                            VBox.setMargin( hBox, new Insets( 10, 10, 10, 10 ) );
+                            hBox.getChildren( ).add( conceptLabel );
+                            for ( final Map.Entry< String, Float > statistics : entry.getValue( ).entrySet( ) ) {
+                                final HBox statBox = new HBox( );
+                                final Label statNameLabel = new Label( statistics.getKey( ) );
+                                final Label statValueLabel = new Label( statistics.getValue( ).toString( ) );
+                                statBox.getChildren( ).setAll( statNameLabel, statValueLabel );
+                                hBox.getChildren( ).add( statBox );
+                            }
+                            vBox.getChildren( ).add( hBox );
+                            vBoxRoot.getChildren( ).add( vBox );
+                        }
+                        paneLeft.getChildren( ).setAll( vBoxRoot );
+                    });
+                }
+
+            }
+        } );
+
     }
 }

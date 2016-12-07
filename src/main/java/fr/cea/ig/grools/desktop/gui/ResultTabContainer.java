@@ -26,20 +26,26 @@ import lombok.NonNull;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
-public class ResultTabController {
-    
+public class ResultTabContainer {
+    private static final AtomicInteger counter = new AtomicInteger( );
+
+    @Getter
+    private final long id;
     
     @NonNull @Getter
     private final Stage resultTabStage;
     
     @NonNull @Getter
     private final Reasoner reasoner;
-    
+
+    @NonNull @Getter
     private final Tab                                       tab;
-    private final TreeTableView<PriorKnowledgeRow>          resultTableView;
+    @NonNull @Getter
+    private final TreeTableView<PriorKnowledgeRow>          tableView;
     private final TreeTableColumn<PriorKnowledgeRow,String> tableColumnName;
     private final TreeTableColumn<PriorKnowledgeRow,String> tableColumnDescription;
     private final TreeTableColumn<PriorKnowledgeRow,String> tableColumnExpectation;
@@ -99,11 +105,12 @@ public class ResultTabController {
         col.setGraphic(stack);
     }
 
-    public ResultTabController( @NonNull final Stage resultTabStage, @NonNull final TabPane tabPane, @NonNull final Reasoner reasoner ) {
+    public ResultTabContainer( @NonNull final Stage resultTabStage, @NonNull final TabPane tabPane, @NonNull final Reasoner reasoner ) {
+        this.id                                 = counter.incrementAndGet( );
         this.resultTabStage                     = resultTabStage;
         this.reasoner                           = reasoner;
         this.tab                                = new Tab( );
-        this.resultTableView                    = new TreeTableView<>(  );
+        this.tableView = new TreeTableView<>(  );
         this.tableColumnName                    = new TreeTableColumn<>( "Name" );
         this.tableColumnDescription             = new TreeTableColumn<>( "Description" );
         this.tableColumnExpectation             = new TreeTableColumn<>( "Expectation" );
@@ -135,7 +142,7 @@ public class ResultTabController {
         final int widthColumnApproximatedTruthValue = 150;
         final int widthColumnConclusion             = 200;
 
-//        resultTableView.getStylesheets().
+//        tableView.getStylesheets().
         makeHeaderWrappable(tableColumnApproximatedExpectation);
         makeHeaderWrappable(tableColumnApproximatedPrediction);
         tableColumnExpectation.setStyle( "-fx-alignment: CENTER;");
@@ -160,7 +167,7 @@ public class ResultTabController {
                                         + tableColumnPrediction.getWidth()
                                         + tableColumnApproximatedPrediction.getWidth()
                                         + tableColumnConclusion.getWidth();
-            final double widthTable = resultTableView.getWidth();
+            final double widthTable = tableView.getWidth( );
             final double widthTmp = widthTable - widthTotal;
             if( widthTmp > 0){
                 tableColumnDescription.setPrefWidth( widthColumnDescription + widthTmp );
@@ -220,11 +227,11 @@ public class ResultTabController {
 
         rootNode.getChildren().addAll( items );
 
-        resultTableView.getColumns()
-                       .setAll( tableColumnName, tableColumnDescription, tableColumnExpectation, tableColumnApproximatedExpectation, tableColumnPrediction, tableColumnApproximatedPrediction, tableColumnConclusion );
-        resultTableView.setRoot( rootNode );
-        resultTableView.setShowRoot( false );
-        tab.setContent( resultTableView );
+        tableView.getColumns( )
+                 .setAll( tableColumnName, tableColumnDescription, tableColumnExpectation, tableColumnApproximatedExpectation, tableColumnPrediction, tableColumnApproximatedPrediction, tableColumnConclusion );
+        tableView.setRoot( rootNode );
+        tableView.setShowRoot( false );
+        tab.setContent( tableView );
         tabPane.getTabs().add( tab );
         resultTabStage.show();
     }
