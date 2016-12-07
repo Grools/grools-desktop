@@ -3,16 +3,12 @@ package fr.cea.ig.grools.desktop.gui;
 import fr.cea.ig.grools.fact.PriorKnowledge;
 import fr.cea.ig.grools.fact.Relation;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
@@ -42,7 +38,7 @@ public class ResultTabController {
     @NonNull @Getter
     private final Reasoner reasoner;
     
-    private final Tab                                   tab;
+    private final Tab                                       tab;
     private final TreeTableView<PriorKnowledgeRow>          resultTableView;
     private final TreeTableColumn<PriorKnowledgeRow,String> tableColumnName;
     private final TreeTableColumn<PriorKnowledgeRow,String> tableColumnDescription;
@@ -132,6 +128,13 @@ public class ResultTabController {
                                                               return ti;
                                                           } )
                                                           .collect( Collectors.toSet( ) );
+
+        final int widthColumnName                   = 150;
+        final int widthColumnDescription            = 400;
+        final int widthColumnTruthValue             = 100;
+        final int widthColumnApproximatedTruthValue = 150;
+        final int widthColumnConclusion             = 200;
+
 //        resultTableView.getStylesheets().
         makeHeaderWrappable(tableColumnApproximatedExpectation);
         makeHeaderWrappable(tableColumnApproximatedPrediction);
@@ -139,18 +142,39 @@ public class ResultTabController {
         tableColumnApproximatedExpectation.setStyle( "-fx-alignment: CENTER;");
         tableColumnPrediction.setStyle( "-fx-alignment: CENTER;");
         tableColumnApproximatedPrediction.setStyle( "-fx-alignment: CENTER;");
-        
-        
+
+
+        tableColumnName.setMinWidth( widthColumnName );
+        tableColumnName.setMaxWidth( widthColumnName );
         tableColumnName.setCellValueFactory( p -> {
             final PriorKnowledgeRow pkr = p.getValue().getValue();
             return new ReadOnlyObjectWrapper<>( pkr.name );
         } );
-        tableColumnDescription.setMinWidth( 400 );
+
+        tableColumnDescription.setMinWidth( widthColumnDescription );
+        resultTabStage.getScene().widthProperty().addListener(  event  -> {
+            final double widthTotal =  tableColumnName.getWidth()
+                                        + tableColumnDescription.getWidth()
+                                        + tableColumnExpectation.getWidth()
+                                        + tableColumnApproximatedExpectation.getWidth()
+                                        + tableColumnPrediction.getWidth()
+                                        + tableColumnApproximatedPrediction.getWidth()
+                                        + tableColumnConclusion.getWidth();
+            final double widthTable = resultTableView.getWidth();
+            final double widthTmp = widthTable - widthTotal;
+            if( widthTmp > 0){
+                tableColumnDescription.setPrefWidth( widthColumnDescription + widthTmp );
+            }
+            else{
+                tableColumnDescription.setPrefWidth( widthColumnDescription );
+            }
+        } );
 //        tableColumnDescription.setMaxWidth( 400 );
         tableColumnDescription.setCellValueFactory( p -> {
             final PriorKnowledgeRow              pkr  = p.getValue().getValue();
             return new ReadOnlyObjectWrapper<>( pkr.description );
         });
+
         tableColumnDescription.setCellFactory( c -> {
             final TreeTableCell<PriorKnowledgeRow,String> cell = new TreeTableCell<>();
             final Text text = new Text(  );
@@ -158,58 +182,46 @@ public class ResultTabController {
             cell.setGraphic( text );text.textProperty().bind(cell.itemProperty());
             return cell;
         } );
-        tableColumnExpectation.setMinWidth( 100 );
-        tableColumnExpectation.setMaxWidth( 100 );
+
+        tableColumnExpectation.setMinWidth( widthColumnTruthValue );
+        tableColumnExpectation.setMaxWidth( widthColumnTruthValue );
         tableColumnExpectation.setCellValueFactory( p -> {
             final PriorKnowledgeRow pkr = p.getValue().getValue();
             return new ReadOnlyObjectWrapper<>( pkr.expectation );
         });
-        tableColumnApproximatedExpectation.setMinWidth( 150 );
-        tableColumnApproximatedExpectation.setMaxWidth( 150 );
+
+        tableColumnApproximatedExpectation.setMinWidth( widthColumnApproximatedTruthValue );
+        tableColumnApproximatedExpectation.setMaxWidth( widthColumnApproximatedTruthValue );
         tableColumnApproximatedExpectation.setCellValueFactory( p -> {
             final PriorKnowledgeRow pkr = p.getValue().getValue();
             return new ReadOnlyObjectWrapper<>( pkr.approximatedExpectation );
         });
-        tableColumnPrediction.setMinWidth( 100 );
-        tableColumnPrediction.setMaxWidth( 100 );
+
+        tableColumnPrediction.setMinWidth( widthColumnTruthValue );
+        tableColumnPrediction.setMaxWidth( widthColumnTruthValue );
         tableColumnPrediction.setCellValueFactory( p -> {
             final PriorKnowledgeRow pkr = p.getValue().getValue();
             return new ReadOnlyObjectWrapper<>( pkr.prediction );
         });
-        tableColumnApproximatedPrediction.setMinWidth( 150 );
-        tableColumnApproximatedPrediction.setMaxWidth( 150 );
+
+        tableColumnApproximatedPrediction.setMinWidth( widthColumnApproximatedTruthValue );
+        tableColumnApproximatedPrediction.setMaxWidth( widthColumnApproximatedTruthValue );
         tableColumnApproximatedPrediction.setCellValueFactory( p -> {
             final PriorKnowledgeRow pkr = p.getValue().getValue();
             return new ReadOnlyObjectWrapper<>( pkr.approximatedPrediction );
         });
+
+        tableColumnConclusion.setMinWidth( widthColumnConclusion );
+        tableColumnConclusion.setMaxWidth( widthColumnConclusion );
         tableColumnConclusion.setCellValueFactory( p -> {
             final PriorKnowledgeRow pkr = p.getValue().getValue();
             return new ReadOnlyObjectWrapper<>( pkr.conclusion );
         });
-        //tableColumnLeafStatistics.setCellValueFactory(  new PropertyValueFactory<>( "leaf_statistics" ) );
-
-
-//        topPriorKnowledge.addAll( reasoner.getTopsPriorKnowledges()
-//                                          .stream()
-//                                          .filter( pk -> (reasoner.getRelationsWithTarget( pk )).size() > 0 )
-//                                          .map( pk -> {
-//                                                    final PriorKnowledgeRow.PriorKnowledgeRowBuilder pkr = PriorKnowledgeRow.builder();
-//                                                    pkr.name( pk.getName() );
-//                                                    pkr.description( pk.getDescription() );
-//                                                    pkr.expectation( pk.getExpectation().toString() );
-//                                                    pkr.approximatedExpectation( Reasoner.expectationToTruthValueSet( pk.getExpectation( ) ).toString( ) );
-//                                                    pkr.prediction( pk.getPrediction().toString() );
-//                                                    pkr.approximatedPrediction( Reasoner.predictionToTruthValueSet( pk.getPrediction() ).toString() );
-//                                                    pkr.conclusion( pk.getConclusion().toString() );
-//                                                    return  pkr.build();
-//                                                } )
-//                                          .collect( Collectors.toList( ) ) );
-
-        //resultTableView.setItems( topPriorKnowledge );
 
         rootNode.getChildren().addAll( items );
 
-        resultTableView.getColumns().setAll( tableColumnName, tableColumnDescription, tableColumnExpectation, tableColumnApproximatedExpectation, tableColumnPrediction, tableColumnApproximatedPrediction, tableColumnConclusion );
+        resultTableView.getColumns()
+                       .setAll( tableColumnName, tableColumnDescription, tableColumnExpectation, tableColumnApproximatedExpectation, tableColumnPrediction, tableColumnApproximatedPrediction, tableColumnConclusion );
         resultTableView.setRoot( rootNode );
         resultTableView.setShowRoot( false );
         tab.setContent( resultTableView );
