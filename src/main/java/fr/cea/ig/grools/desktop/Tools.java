@@ -32,7 +32,7 @@ public class Tools {
     public static Pane loadFXML( @NonNull final String fxmlFileName, @NonNull final Object controller ){
         Pane content = null;
         try {
-            final FXMLLoader loader = new FXMLLoader( Main.class.getResource( "/fxml/"+fxmlFileName ) );
+            final FXMLLoader loader = new FXMLLoader( Tools.class.getResource( "/fxml/"+fxmlFileName ) );
             loader.setController(controller);
             content = loader.load();
         }
@@ -41,5 +41,9 @@ public class Tools {
             System.exit( 1 );
         }
         return content;
+    }
+    
+    public static String  getCssFile( @NonNull final String cssFileName ){
+        return Tools.class.getResource( "/css/"+cssFileName ).toExternalForm();
     }
 }
