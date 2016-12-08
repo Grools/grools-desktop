@@ -6,6 +6,7 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -14,7 +15,11 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -140,7 +145,6 @@ public class ResultTabContainer {
                                                           .collect( Collectors.toSet( ) );
 
         tab.setId( "global-results-tab-"+Long.toString( id ) );
-
         final int widthColumnName                   = 150;
         final int widthColumnDescription            = 400;
         final int widthColumnTruthValue             = 100;
@@ -240,6 +244,14 @@ public class ResultTabContainer {
         scrollPane.setContent( tableView );
         tab.setContent( scrollPane );
         tabPane.getTabs().add( tab );
+        HBox.setHgrow( scrollPane, Priority.ALWAYS );
+        HBox.setHgrow( tableView, Priority.ALWAYS );
+        scrollPane.setPrefSize( Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE );
+        scrollPane.setMaxSize( Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE );
+        scrollPane.setStyle( "-fx-border-color: red" );
+        tableView.setPrefSize( Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE );
+        tableView.setMaxSize( Control.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE );
+        tableView.setStyle( "-fx-border-color: blue" );
         //resultTabStage.show();
     }
 }

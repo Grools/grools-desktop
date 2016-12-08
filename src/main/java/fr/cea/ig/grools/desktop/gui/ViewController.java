@@ -16,6 +16,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -244,12 +246,12 @@ public class ViewController implements Initializable {
             fileChooser.getExtensionFilters()
                        .add(groolsFilter);
             fileChooser.setTitle( "Select GROOLS dump file" );
-            final File      groolsDump  = fileChooser.showOpenDialog( primaryStage );
-            final Reasoner  reasoner    = loadGROOLS_Dump( groolsDump );
-            final ResultTabContainer resultTabController = new ResultTabContainer( primaryStage, tabPane, reasoner );
+            final File                              groolsDump          = fileChooser.showOpenDialog( primaryStage );
+            final Reasoner                          reasoner            = loadGROOLS_Dump( groolsDump );
+            final ResultTabContainer                resultTabController = new ResultTabContainer( primaryStage, tabPane, reasoner );
+            final Tab                               selectedTab         = resultTabController.getTab();
+            final TreeTableView<PriorKnowledgeRow>  tableView           = resultTabController.getTableView();
             tabContainerMap.put( resultTabController.getTab().getId(), resultTabController  );
-            final Tab selectedTab  = resultTabController.getTab();
-            final TreeTableView<PriorKnowledgeRow> tableView = resultTabController.getTableView();
             tabPane.getSelectionModel().select( selectedTab );
 
             final TreeTableView.TreeTableViewSelectionModel< PriorKnowledgeRow > model = tableView.getSelectionModel( );
@@ -265,9 +267,13 @@ public class ViewController implements Initializable {
                                                                                         } );
                         paneLeft.getChildren( ).clear( );
                         final VBox vBoxRoot = new VBox( );
+                        vBoxRoot.setFillWidth( true );
                         for ( final Map.Entry< String, Map< String, Number > > entry : stats.entrySet( ) ) {
                             final HBox headerBox = new HBox( );
                             final Label conceptLabel = new Label( entry.getKey( ) );
+                            headerBox.setFillHeight( true );
+                            conceptLabel.setPrefWidth( Control.USE_COMPUTED_SIZE );
+                            conceptLabel.setPrefHeight( Control.USE_COMPUTED_SIZE );
                             headerBox.getChildren().add( conceptLabel );
                             HBox.setHgrow( conceptLabel, Priority.ALWAYS );
                             vBoxRoot.getChildren( ).add(headerBox);
@@ -284,7 +290,9 @@ public class ViewController implements Initializable {
                                 vBoxRoot.getChildren( ).add( statBox );
                             }
                         }
-                        paneLeft.getChildren( ).setAll( vBoxRoot );
+                        paneLeft.getChildren( ).clear();
+                        paneLeft.getChildren( ).add( vBoxRoot );
+                        vBoxRoot.prefWidthProperty().bind( paneLeft.widthProperty() );
                 }
             }  );
             //tabPane.getSelectionModel().selectLast();
