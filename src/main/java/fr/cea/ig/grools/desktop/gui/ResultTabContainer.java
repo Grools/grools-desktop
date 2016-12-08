@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TreeItem;
@@ -35,7 +36,7 @@ public class ResultTabContainer {
 
     @Getter
     private final long id;
-    
+
     @NonNull @Getter
     private final Stage resultTabStage;
     
@@ -44,6 +45,7 @@ public class ResultTabContainer {
 
     @NonNull @Getter
     private final Tab                                       tab;
+    private final ScrollPane                                scrollPane;
     @NonNull @Getter
     private final TreeTableView<PriorKnowledgeRow>          tableView;
     private final TreeTableColumn<PriorKnowledgeRow,String> tableColumnName;
@@ -109,8 +111,9 @@ public class ResultTabContainer {
         this.id                                 = counter.incrementAndGet( );
         this.resultTabStage                     = resultTabStage;
         this.reasoner                           = reasoner;
-        this.tab                                = new Tab( );
-        this.tableView = new TreeTableView<>(  );
+        this.tab                                = new Tab( "global results-"+Long.toString( id ) );
+        this.scrollPane                         = new ScrollPane( );
+        this.tableView                          = new TreeTableView<>(  );
         this.tableColumnName                    = new TreeTableColumn<>( "Name" );
         this.tableColumnDescription             = new TreeTableColumn<>( "Description" );
         this.tableColumnExpectation             = new TreeTableColumn<>( "Expectation" );
@@ -135,6 +138,8 @@ public class ResultTabContainer {
                                                               return ti;
                                                           } )
                                                           .collect( Collectors.toSet( ) );
+
+        tab.setId( "global-results-tab-"+Long.toString( id ) );
 
         final int widthColumnName                   = 150;
         final int widthColumnDescription            = 400;
@@ -231,8 +236,10 @@ public class ResultTabContainer {
                  .setAll( tableColumnName, tableColumnDescription, tableColumnExpectation, tableColumnApproximatedExpectation, tableColumnPrediction, tableColumnApproximatedPrediction, tableColumnConclusion );
         tableView.setRoot( rootNode );
         tableView.setShowRoot( false );
-        tab.setContent( tableView );
+        tableView.getSelectionModel().clearSelection();
+        scrollPane.setContent( tableView );
+        tab.setContent( scrollPane );
         tabPane.getTabs().add( tab );
-        resultTabStage.show();
+        //resultTabStage.show();
     }
 }
