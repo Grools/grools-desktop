@@ -242,7 +242,6 @@ public class ViewController implements Initializable {
         // with empty content.
         tabPane.getSelectionModel().clearSelection();
 
-
         menuLoadGROOLS_dump.setOnAction( event -> {
             final FileChooser fileChooser = new FileChooser();
             // Set extension filter
@@ -258,6 +257,9 @@ public class ViewController implements Initializable {
             final TreeTableView<PriorKnowledgeRow> tableView           = resultTabController.getTableView();
             tabContainerMap.put( resultTabController.getTab().getId(), resultTabController  );
             tabPane.getSelectionModel().select( selectedTab );
+            paneRight.setStyle( "-fx-border-color: red" );
+            tabPane.setStyle( "-fx-border-color: blue" );
+            resultTabController.getTab().setStyle( "-fx-border-color: green" );
 
             final TreeTableView.TreeTableViewSelectionModel< PriorKnowledgeRow > model = tableView.getSelectionModel( );
             model.selectedItemProperty().addListener( (obs, oldSelection, newSelection) -> {
