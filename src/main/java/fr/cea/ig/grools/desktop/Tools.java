@@ -2,6 +2,8 @@ package fr.cea.ig.grools.desktop;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.util.BuilderFactory;
 import lombok.NonNull;
 
 import java.io.IOException;
@@ -29,8 +31,8 @@ public class Tools {
         return applicationPath;
     }
     
-    public static Pane loadFXML( @NonNull final String fxmlFileName, @NonNull final Object controller ){
-        Pane content = null;
+    public static Region loadFXML( @NonNull final String fxmlFileName, @NonNull final Object controller ){
+        Region content = null;
         try {
             final FXMLLoader loader = new FXMLLoader( Tools.class.getResource( "/fxml/"+fxmlFileName ) );
             loader.setController(controller);

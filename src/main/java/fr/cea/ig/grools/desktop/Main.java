@@ -17,7 +17,7 @@ public class Main  extends Application {
         final double         width      = screenSize.getWidth();
         final double         height     = screenSize.getHeight();
         final ViewController controller = new ViewController( primaryStage );
-        final Pane           mainPane   = Tools.loadFXML( "main.fxml" , controller );
+        final Pane           mainPane   = ( Pane ) Tools.loadFXML( "main.fxml" , controller );
         final Scene          myScene    = new Scene( mainPane );
         myScene.getStylesheets().addAll( Tools.getCssFile("grools.css") );
 

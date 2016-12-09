@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -106,9 +107,9 @@ public class ViewController implements Initializable {
     
     // -- End of menu help --
     
-    @FXML
-    private SplitPane mainSlpitPane;
-    
+//    @FXML
+//    private SplitPane mainSlpitPane;
+//
     @FXML
     private Pane paneRight;
 
@@ -214,7 +215,7 @@ public class ViewController implements Initializable {
     @Override // This method is called by the FXMLLoader when initialization is complete
     public void initialize( URL fxmlFileLocation, ResourceBundle resources ) {
         assert menuItemAbout != null : "fx:id=\"menuItemAbout\" was not injected: check your FXML file 'main.fxml'.";
-        assert mainSlpitPane != null : "fx:id=\"mainSlpitPane\" was not injected: check your FXML file 'main.fxml'.";
+//        assert mainSlpitPane != null : "fx:id=\"mainSlpitPane\" was not injected: check your FXML file 'main.fxml'.";
         assert menuFile != null : "fx:id=\"menuFile\" was not injected: check your FXML file 'main.fxml'.";
         assert paneLeft != null : "fx:id=\"paneLeft\" was not injected: check your FXML file 'main.fxml'.";
         assert paneRight != null : "fx:id=\"paneRight\" was not injected: check your FXML file 'main.fxml'.";
@@ -229,6 +230,9 @@ public class ViewController implements Initializable {
         assert labelRightStatus != null : "fx:id=\"labelRightStatus\" was not injected: check your FXML file 'main.fxml'.";
         assert menuItemClose != null : "fx:id=\"menuItemClose\" was not injected: check your FXML file 'main.fxml'.";
         assert menuHelp != null : "fx:id=\"menuHelp\" was not injected: check your FXML file 'main.fxml'.";
+        
+//        final Double paneRightWidth = primaryStage.widthProperty().doubleValue() - 200;
+//        paneRight.setPrefWidth( paneRightWidth > 0 ? paneRightWidth: 600 );
 
 //        menuBar.prefWidthProperty().bind(primaryStage.widthProperty());
 //        mainSlpitPane.prefHeightProperty().bind(primaryStage.heightProperty());
@@ -246,11 +250,12 @@ public class ViewController implements Initializable {
             fileChooser.getExtensionFilters()
                        .add(groolsFilter);
             fileChooser.setTitle( "Select GROOLS dump file" );
-            final File                              groolsDump          = fileChooser.showOpenDialog( primaryStage );
-            final Reasoner                          reasoner            = loadGROOLS_Dump( groolsDump );
-            final ResultTabContainer                resultTabController = new ResultTabContainer( primaryStage, tabPane, reasoner );
-            final Tab                               selectedTab         = resultTabController.getTab();
-            final TreeTableView<PriorKnowledgeRow>  tableView           = resultTabController.getTableView();
+            final File                             groolsDump          = fileChooser.showOpenDialog( primaryStage );
+            final Reasoner                         reasoner            = loadGROOLS_Dump( groolsDump );
+            final ResultTabContainer               resultTabController = new ResultTabContainer( primaryStage, tabPane, reasoner );
+            final ScrollPane                       scrollPane          = (ScrollPane) Tools.loadFXML( "tab_results.fxml" , resultTabController );
+            final Tab                              selectedTab         = resultTabController.getTab();
+            final TreeTableView<PriorKnowledgeRow> tableView           = resultTabController.getTableView();
             tabContainerMap.put( resultTabController.getTab().getId(), resultTabController  );
             tabPane.getSelectionModel().select( selectedTab );
 
@@ -300,7 +305,7 @@ public class ViewController implements Initializable {
         menuItemPreference.setOnAction( event -> {
             final Stage                preferenceStage = new Stage();
             final PreferenceController controller      = new PreferenceController( preferenceStage );
-            final Pane                 preferencePane  = Tools.loadFXML( "preference.fxml" , controller );
+            final Pane                 preferencePane  = ( Pane ) Tools.loadFXML( "preference.fxml" , controller );
             preferenceStage.setTitle( "Preference" );
             preferenceStage.setScene(new Scene( preferencePane, preferencePane.getPrefWidth(), preferencePane.getPrefHeight() ) );
             preferenceStage.show();
@@ -309,7 +314,7 @@ public class ViewController implements Initializable {
         menuItemStartReasoning.setOnAction( event -> {
             final Stage                        analyzeDialogBoxStage = new Stage( StageStyle.UTILITY );
             final AnalyzeDialogueBoxController controller            = new AnalyzeDialogueBoxController( analyzeDialogBoxStage );
-            final Pane                         analyzeDialogBoxPane  = Tools.loadFXML( "analyze_dialog_box.fxml" , controller );
+            final Pane                         analyzeDialogBoxPane  = ( Pane ) Tools.loadFXML( "analyze_dialog_box.fxml" , controller );
             analyzeDialogBoxStage.initModality( Modality.APPLICATION_MODAL );
             analyzeDialogBoxStage.setTitle( "Configuration" );
             analyzeDialogBoxStage.setScene(new Scene( analyzeDialogBoxPane, analyzeDialogBoxPane.getPrefWidth(), analyzeDialogBoxPane.getPrefHeight() ) );
