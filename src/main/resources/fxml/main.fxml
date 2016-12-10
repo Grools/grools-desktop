@@ -50,49 +50,8 @@
             <Pane fx:id="paneLeft" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="250.0" />
             <Pane fx:id="paneRight" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                  <children>
-                     <VBox HBox.hgrow="ALWAYS">
+                     <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
                          <children>
-                             <HBox maxHeight="-Infinity" maxWidth="-Infinity" VBox.vgrow="NEVER">
-                                 <children>
-                                     <Label text="Filters" HBox.hgrow="NEVER">
-                                         <HBox.margin>
-                                             <Insets top="5.0" />
-                                         </HBox.margin>
-                                     </Label>
-                                     <TextField fx:id="filterNameAndDescription" promptText="Search" HBox.hgrow="ALWAYS">
-                                         <HBox.margin>
-                                             <Insets left="10.0" right="10.0" />
-                                         </HBox.margin>
-                                     </TextField>
-                                     <MenuBar HBox.hgrow="ALWAYS">
-                                         <menus>
-                                             <Menu fx:id="filterPrediction" mnemonicParsing="false" text="Prediction">
-                                                 <items>
-                                                     <CheckMenuItem mnemonicParsing="false" text="True only" />
-                                                     <CheckMenuItem mnemonicParsing="false" text="False only" />
-                                                     <CheckMenuItem mnemonicParsing="false" text="Both" />
-                                                     <CheckMenuItem mnemonicParsing="false" text="None" />
-                                                 </items>
-                                             </Menu>
-                                             <Menu fx:id="filterExpectation" mnemonicParsing="false" text="Expectation">
-                                                 <items>
-                                                     <CheckMenuItem mnemonicParsing="false" text="None" />
-                                                     <CheckMenuItem mnemonicParsing="false" text="Both" />
-                                                     <CheckMenuItem mnemonicParsing="false" text="False only" />
-                                                     <CheckMenuItem mnemonicParsing="false" text="True only" />
-                                                 </items>
-                                             </Menu>
-                                             <Menu fx:id="filterConclusion" mnemonicParsing="false" text="Conclusion" />
-                                         </menus>
-                                     </MenuBar>
-                                 </children>
-                                 <VBox.margin>
-                                     <Insets />
-                                 </VBox.margin>
-                                 <padding>
-                                     <Insets left="10.0" right="10.0" top="10.0" />
-                                 </padding>
-                             </HBox>
                              <TabPane fx:id="tabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS" />
                          </children>
                      </VBox>

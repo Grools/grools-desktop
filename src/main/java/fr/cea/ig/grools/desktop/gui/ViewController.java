@@ -112,16 +112,7 @@ public class ViewController implements Initializable {
 //
     @FXML
     private Pane paneRight;
-
-    @FXML @Getter
-    private Menu filterPrediction;
-
-    @FXML @Getter
-    private Menu filterExpectation;
-
-    @FXML @Getter
-    private Menu filterConclusion;
-
+    
     @FXML @Getter
     private TabPane tabPane;
 
@@ -241,6 +232,8 @@ public class ViewController implements Initializable {
         // to be able fire the manual selection event below. Otherwise the 1st tab will be selected
         // with empty content.
         tabPane.getSelectionModel().clearSelection();
+        tabPane.prefWidthProperty().bind( paneRight.widthProperty() );
+        tabPane.prefHeightProperty().bind( paneRight.heightProperty() );
 
         menuLoadGROOLS_dump.setOnAction( event -> {
             final FileChooser fileChooser = new FileChooser();
@@ -257,9 +250,6 @@ public class ViewController implements Initializable {
             final TreeTableView<PriorKnowledgeRow> tableView           = resultTabController.getTableView();
             tabContainerMap.put( resultTabController.getTab().getId(), resultTabController  );
             tabPane.getSelectionModel().select( selectedTab );
-            paneRight.setStyle( "-fx-border-color: red" );
-            tabPane.setStyle( "-fx-border-color: blue" );
-            resultTabController.getTab().setStyle( "-fx-border-color: green" );
 
             final TreeTableView.TreeTableViewSelectionModel< PriorKnowledgeRow > model = tableView.getSelectionModel( );
             model.selectedItemProperty().addListener( (obs, oldSelection, newSelection) -> {
@@ -325,7 +315,7 @@ public class ViewController implements Initializable {
             analyzeDialogBoxStage.toFront();
             analyzeDialogBoxStage.showAndWait();
         } );
-        menuItemClose.setOnAction( event -> { primaryStage.close(); } );
+        menuItemClose.setOnAction( event -> primaryStage.close( ) );
 
 
     }

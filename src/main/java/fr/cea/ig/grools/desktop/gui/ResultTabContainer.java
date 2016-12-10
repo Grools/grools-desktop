@@ -9,9 +9,11 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
@@ -64,6 +66,19 @@ public class ResultTabContainer {
     private ScrollPane scrollPane;
     
     @FXML @Getter
+    private TextField filterNameAndDescription;
+    
+    
+    @FXML @Getter
+    private Menu filterPrediction;
+    
+    @FXML @Getter
+    private Menu filterExpectation;
+    
+    @FXML @Getter
+    private Menu filterConclusion;
+    
+    @FXML @Getter
     private TreeTableView<PriorKnowledgeRow>          tableView;
     
     @FXML
@@ -94,6 +109,10 @@ public class ResultTabContainer {
     @FXML
     void initialize() {
         assert scrollPane != null : "fx:id=\"scrollPane\" was not injected: check your FXML file 'tab_results.fxml'.";
+        assert filterNameAndDescription != null : "fx:id=\"scrollPane\" was not injected: check your FXML file 'tab_results.fxml'.";
+        assert filterPrediction != null : "fx:id=\"scrofilterPredictionllPane\" was not injected: check your FXML file 'tab_results.fxml'.";
+        assert filterExpectation != null : "fx:id=\"filterExpectation\" was not injected: check your FXML file 'tab_results.fxml'.";
+        assert filterConclusion != null : "fx:id=\"filterConclusion\" was not injected: check your FXML file 'tab_results.fxml'.";
         assert columnApproximatedExpectation != null : "fx:id=\"columnApproximatedExpectation\" was not injected: check your FXML file 'tab_results.fxml'.";
         assert columnPrediction != null : "fx:id=\"columnPrediction\" was not injected: check your FXML file 'tab_results.fxml'.";
         assert columnApproximatedPrediction != null : "fx:id=\"columnApproximatedPrediction\" was not injected: check your FXML file 'tab_results.fxml'.";
@@ -201,11 +220,9 @@ public class ResultTabContainer {
         tableView.setRoot( rootNode );
         tableView.setShowRoot( false );
         tableView.getSelectionModel().clearSelection();
-        scrollPane.setContent( tableView );
+        //scrollPane.setContent( tableView );
         tab.setContent( scrollPane );
         tabPane.getTabs().add( tab );
-        scrollPane.setStyle( "-fx-border-color: red" );
-        tableView.setStyle( "-fx-border-color: blue" );
         
     }
 
