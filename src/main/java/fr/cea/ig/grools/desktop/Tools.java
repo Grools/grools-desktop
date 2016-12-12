@@ -1,9 +1,7 @@
 package fr.cea.ig.grools.desktop;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.util.BuilderFactory;
 import lombok.NonNull;
 
 import java.io.IOException;
