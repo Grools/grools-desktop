@@ -23,7 +23,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTablePosition;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -39,6 +42,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -448,6 +452,22 @@ public class ResultTabContainer {
         MenuItem menuRemoveAnExpectation= new MenuItem( "Remove an expectation");
         MenuItem menuAddAPrediction     = new MenuItem( "Add a prediction");
         MenuItem menuRemoveAPrediction  = new MenuItem( "Remove a prediction");
+
+        menuCopy.setOnAction( event -> {
+            final ObservableList< TreeTablePosition< PriorKnowledgeRow, ? > > observableList = tableView.getSelectionModel( ).getSelectedCells( );
+            final String toCopy = observableList.stream()
+                                                .map( tablepos -> {
+                                                    final int col = tablepos.getColumn();
+                                                    final int row = tablepos.getRow();
+                                                    return (String)tableView.getColumns().get( col ).getCellData( row );
+                                                } )
+                                                .filter( obj -> obj != null )
+                                                .collect( Collectors.joining(" ") );
+            final ClipboardContent content = new ClipboardContent();
+            content.putString( toCopy );
+            Clipboard.getSystemClipboard( ).setContent( content );
+        } );
+
         tableView.setContextMenu( new ContextMenu(menuVisualize, menuCopy,menuAddAnExpectation,menuRemoveAnExpectation, menuAddAPrediction, menuRemoveAPrediction) );
         
         tableView.getSelectionModel().clearSelection();
