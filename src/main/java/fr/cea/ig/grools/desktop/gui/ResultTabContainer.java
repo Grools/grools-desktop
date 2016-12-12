@@ -12,8 +12,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckMenuItem;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -438,6 +440,16 @@ public class ResultTabContainer {
                  .setAll( columnName, columnDescription, columnExpectation, columnApproximatedExpectation, columnPrediction, columnApproximatedPrediction, columnConclusion );
         tableView.setRoot( rootNode );
         tableView.setShowRoot( false );
+    
+        //TODO add event
+        MenuItem menuVisualize          = new MenuItem( "Visualize");
+        MenuItem menuCopy               = new MenuItem( "Copy");
+        MenuItem menuAddAnExpectation   = new MenuItem( "Add an expectation");
+        MenuItem menuRemoveAnExpectation= new MenuItem( "Remove an expectation");
+        MenuItem menuAddAPrediction     = new MenuItem( "Add a prediction");
+        MenuItem menuRemoveAPrediction  = new MenuItem( "Remove a prediction");
+        tableView.setContextMenu( new ContextMenu(menuVisualize, menuCopy,menuAddAnExpectation,menuRemoveAnExpectation, menuAddAPrediction, menuRemoveAPrediction) );
+        
         tableView.getSelectionModel().clearSelection();
         //scrollPane.setContent( tableView );
         tab.setContent( scrollPane );
