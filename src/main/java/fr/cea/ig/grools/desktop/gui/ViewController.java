@@ -256,6 +256,7 @@ public class ViewController implements Initializable {
                 final ObservableList< TreeItem< PriorKnowledgeRow > > selectedTreeItems = model.getSelectedItems( );
                 if( selectedTreeItems != null ){
                     final Map< String, Map< String, Number > > stats = selectedTreeItems.stream( )
+                                                                                       .filter( ti -> ti != null )
                                                                                        .map( ti -> ti.getValue( ).getName( ) )
                                                                                        .map( name -> reasoner.getConcept( name ) )
                                                                                        .collect( HashMap< String, Map< String, Number > >::new,

@@ -21,7 +21,20 @@ public final class PriorKnowledgeRow {
     public String approximatedPrediction;
     @Getter
     public String conclusion;
-    @Getter
-    public String leafStatistics;
-    
+    @Override
+    public String toString(){
+        return name + ": "                      + description   + " "
+                    + "expectation: "           + expectation   + " " + approximatedExpectation + " "
+                    + "prediction: "            + prediction    + " " + approximatedPrediction  + " "
+                    + "conclusion: "            + conclusion    + " " + approximatedPrediction;
+    }
+
+    public String toJson(){
+        return "{"+
+                    name+ ": \""                      + description   + "\"\n"
+                        + "expectation: \""           + expectation   + " " + approximatedExpectation + "\"\n"
+                        + "prediction: \""            + prediction    + " " + approximatedPrediction  + "\"\n"
+                        + "conclusion: \""            + conclusion    + " " + approximatedPrediction  + "\"\n" +
+                "}";
+    }
 }

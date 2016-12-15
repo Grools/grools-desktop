@@ -3,9 +3,8 @@ package fr.cea.ig.grools.desktop.gui;
 import fr.cea.ig.grools.fact.PriorKnowledge;
 import fr.cea.ig.grools.fact.Relation;
 import fr.cea.ig.grools.logic.TruthValueSet;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.EventHandler;
@@ -24,9 +23,11 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTablePosition;
+import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -35,6 +36,7 @@ import javafx.stage.Stage;
 import fr.cea.ig.grools.reasoner.Reasoner;
 
 
+import javafx.util.Callback;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -42,7 +44,6 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -337,6 +338,72 @@ public class ResultTabContainer {
         scrollPane.prefWidthProperty().bind( tabPane.prefWidthProperty() );
         scrollPane.prefHeightProperty().bind( tabPane.prefHeightProperty() );
 
+//        tableView.getColumns().forEach( ( TreeTableColumn< PriorKnowledgeRow, String> column) -> {
+//            column.setCellFactory( (TreeTableColumn< PriorKnowledgeRow, String > treeTableColumn) -> {
+//                final TreeTableCell<PriorKnowledgeRow,String> cell = new TreeTableCell<>( );
+//                cell.textProperty().bind( cell.itemProperty() );
+//                cell.setOnMouseClicked( event -> {
+//                    if (event.getButton() == MouseButton.SECONDARY) {
+//                        cell.updateSelected( true );
+//                    }
+//                } );
+//                return cell;
+//            } );
+//        } );
+//        for( TreeTableColumn< PriorKnowledgeRow, ?> column : tableView.getColumns( )){
+//            (( TreeTableColumn< PriorKnowledgeRow, String>)column).setCellFactory(
+//                    param -> {
+//                        final TreeTableCell<PriorKnowledgeRow,String> cell = new TreeTableCell<>( );
+//                        cell.textProperty().bind( cell.itemProperty() );
+//                        cell.setOnMouseClicked( event -> {
+//                            if (event.getButton() == MouseButton.SECONDARY) {
+//                                cell.updateSelected( true );
+//                                System.out.println(cell.getText() );
+//                            }
+//                        } );
+//                        return cell;
+//                    }
+//                                                                                 );
+//        }
+
+        tableView.setRowFactory( treeTableView ->{
+            final TreeTableRow<PriorKnowledgeRow>   row = new TreeTableRow<>( );
+            //TODO add event
+            final MenuItem      menuVisualize           = new MenuItem( "Visualize");
+            final MenuItem      menuCopy                = new MenuItem( "Copy");
+            final MenuItem      menuAddAnExpectation    = new MenuItem( "Add an expectation");
+            final MenuItem      menuRemoveAnExpectation = new MenuItem( "Remove an expectation");
+            final MenuItem      menuAddAPrediction      = new MenuItem( "Add a prediction");
+            final MenuItem      menuRemoveAPrediction   = new MenuItem( "Remove a prediction");
+            final ContextMenu   rowMenu                 = new ContextMenu( menuVisualize, menuCopy, menuAddAnExpectation, menuRemoveAnExpectation, menuAddAPrediction, menuRemoveAPrediction );
+
+            menuCopy.setOnAction( event -> {
+                final ObservableList< TreeTablePosition< PriorKnowledgeRow, ? > > observableList = treeTableView.getSelectionModel( ).getSelectedCells( );
+//                final String toCopy = observableList.stream()
+//                                                    .map( tablepos -> {
+//                                                        final int colIndex = tablepos.getColumn();
+//                                                        final int rowIndex = tablepos.getRow();
+//                                                        return (String)treeTableView.getColumns().get( colIndex )
+//                                                                                .getCellData( rowIndex );
+//                                                    } )
+//                                                    .filter( obj -> obj != null )
+//                                                    .collect( Collectors.joining(" ") );
+                final String toCopy = observableList.stream()
+                                                    .map( TreeTablePosition::getTreeItem )
+                                                    .map( TreeItem::getValue )
+                                                    .map( PriorKnowledgeRow::toString )
+                                                    .collect( Collectors.joining("\n", "{\n", "\n}") );
+                final ClipboardContent content = new ClipboardContent();
+                content.putString( toCopy );
+                Clipboard.getSystemClipboard( ).setContent( content );
+            } );
+
+            row.contextMenuProperty().bind( Bindings.when( Bindings.isNotNull(row.itemProperty()) )
+                                                    .then( rowMenu )
+                                                    .otherwise( (ContextMenu)null) );
+            return row;
+        } );
+
 //        tableView.getStylesheets().
         makeHeaderWrappable(columnApproximatedExpectation);
         makeHeaderWrappable(columnApproximatedPrediction);
@@ -377,14 +444,14 @@ public class ResultTabContainer {
             return new ReadOnlyObjectWrapper<>( pkr.description );
         });
         
-        columnDescription.setCellFactory( c -> {
-            final TreeTableCell<PriorKnowledgeRow,String> cell = new TreeTableCell<>();
-            final Text text = new Text(  );
-            text.wrappingWidthProperty().bind(columnDescription.widthProperty());
-            cell.setGraphic( text );text.textProperty().bind(cell.itemProperty());
-            return cell;
-        } );
-        
+//        columnDescription.setCellFactory( c -> {
+//            final TreeTableCell<PriorKnowledgeRow,String> cell = new TreeTableCell<>();
+//            final Text text = new Text(  );
+//            text.wrappingWidthProperty().bind(columnDescription.widthProperty());
+//            cell.setGraphic( text );text.textProperty().bind(cell.itemProperty());
+//            return cell;
+//        } );
+//
         columnExpectation.setMinWidth( widthColumnTruthValue );
         columnExpectation.setMaxWidth( widthColumnTruthValue );
         columnExpectation.setCellValueFactory( p -> {
@@ -445,30 +512,31 @@ public class ResultTabContainer {
         tableView.setRoot( rootNode );
         tableView.setShowRoot( false );
     
-        //TODO add event
-        MenuItem menuVisualize          = new MenuItem( "Visualize");
-        MenuItem menuCopy               = new MenuItem( "Copy");
-        MenuItem menuAddAnExpectation   = new MenuItem( "Add an expectation");
-        MenuItem menuRemoveAnExpectation= new MenuItem( "Remove an expectation");
-        MenuItem menuAddAPrediction     = new MenuItem( "Add a prediction");
-        MenuItem menuRemoveAPrediction  = new MenuItem( "Remove a prediction");
-
-        menuCopy.setOnAction( event -> {
-            final ObservableList< TreeTablePosition< PriorKnowledgeRow, ? > > observableList = tableView.getSelectionModel( ).getSelectedCells( );
-            final String toCopy = observableList.stream()
-                                                .map( tablepos -> {
-                                                    final int col = tablepos.getColumn();
-                                                    final int row = tablepos.getRow();
-                                                    return (String)tableView.getColumns().get( col ).getCellData( row );
-                                                } )
-                                                .filter( obj -> obj != null )
-                                                .collect( Collectors.joining(" ") );
-            final ClipboardContent content = new ClipboardContent();
-            content.putString( toCopy );
-            Clipboard.getSystemClipboard( ).setContent( content );
-        } );
-
-        tableView.setContextMenu( new ContextMenu(menuVisualize, menuCopy,menuAddAnExpectation,menuRemoveAnExpectation, menuAddAPrediction, menuRemoveAPrediction) );
+//        //TODO add event
+//        MenuItem menuVisualize          = new MenuItem( "Visualize");
+//        MenuItem menuCopy               = new MenuItem( "Copy");
+//        MenuItem menuAddAnExpectation   = new MenuItem( "Add an expectation");
+//        MenuItem menuRemoveAnExpectation= new MenuItem( "Remove an expectation");
+//        MenuItem menuAddAPrediction     = new MenuItem( "Add a prediction");
+//        MenuItem menuRemoveAPrediction  = new MenuItem( "Remove a prediction");
+//
+//        menuCopy.setOnAction( event -> {
+//            final ObservableList< TreeTablePosition< PriorKnowledgeRow, ? > > observableList = tableView.getSelectionModel( ).getSelectedCells( );
+//            final String toCopy = observableList.stream()
+//                                                .map( tablepos -> {
+//                                                    final int col = tablepos.getColumn();
+//                                                    final int row = tablepos.getRow();
+//                                                    return (String)tableView.getColumns().get( col )
+//                                                                            .getCellData( row );
+//                                                } )
+//                                                .filter( obj -> obj != null )
+//                                                .collect( Collectors.joining(" ") );
+//            final ClipboardContent content = new ClipboardContent();
+//            content.putString( toCopy );
+//            Clipboard.getSystemClipboard( ).setContent( content );
+//        } );
+//
+//        tableView.setContextMenu( new ContextMenu(menuVisualize, menuCopy,menuAddAnExpectation,menuRemoveAnExpectation, menuAddAPrediction, menuRemoveAPrediction) );
         
         tableView.getSelectionModel().clearSelection();
         //scrollPane.setContent( tableView );
