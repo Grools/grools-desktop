@@ -31,16 +31,13 @@ public class Model {
 
     @NonNull @Getter
     private final Set<Edge> removedEdges;
-
+    
     private final Map<String,Cell> cellMap; // <id,cell>
 
 
 
     public Model() {
-        graphParent = new Cell( "_ROOT_");
-
-        // clear model, create lists
-        clear();
+        graphParent     = new Cell( "_ROOT_");
         allCells        = new HashSet<>();
         addedCells      = new HashSet<>();
         removedCells    = new HashSet<>();
@@ -104,13 +101,12 @@ public class Model {
 
     public void addEdge( @NonNull final String sourceId, @NonNull final String targetId) {
 
-        final Cell sourceCell = cellMap.get( sourceId);
-        final Cell targetCell = cellMap.get( targetId);
+        final Cell sourceCell = cellMap.get( sourceId );
+        final Cell targetCell = cellMap.get( targetId );
 
         final Edge edge = new Edge( sourceCell, targetCell);
-
-        addedEdges.add( edge);
-
+        
+        addedEdges.add( edge );
     }
 
     public <T extends Cell> Set<T> getCells( @NonNull final Class<T> type ){
@@ -141,12 +137,12 @@ public class Model {
                   .filter(edge -> type.isInstance( edge.getSource() ) )
                   .collect( (Collectors.toCollection(() -> results) ) ); //TODO remove
         results.removeAll( removedEdges );
-
         return results;
     }
 
     public <T extends Cell> Set<T> getTopCells( @NonNull final Class<T> type ){
-        final Set<Edge> sources = getEdgesWithSourceType(type); // not top
+        final Set<Edge> edges = getEdgesWithSourceType(type); // not top
+        final Set<Cell> sources = edges.stream().map( Edge::getSource ).collect( Collectors.toSet( ) );
         return getEdgesWithTargetType( type ).stream()
                                              .filter( edge ->! sources.contains( edge.getTarget() )  )
                                              .map( edge -> type.cast( edge.getTarget() ) )

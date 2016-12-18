@@ -6,7 +6,7 @@ import lombok.NonNull;
 
 public class ComputationCell extends Cell {
     public ComputationCell( @NonNull String id ) {
-        super( id, new Polygon( 0d,25d,25d,0d,25d,50d,50d,25d) );
+        super( id, new Polygon( 0d,5d,5d,0d,5d,10d,10d,5d) );
         getStyleClass().add("observation_cell");
     }
 }

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class HierarchicalLayout extends Layout{
     private final Graph graph;
@@ -22,10 +23,11 @@ public class HierarchicalLayout extends Layout{
                                                   .collect( Collectors.toSet( ) );
         if( ! layer.isEmpty() )
             layers.add( layer );
-        final Set<? extends Cell> children = concepts.stream()
-                                                     .map( Cell::getCellChildren )
-                                                     .flatMap( Collection::stream )
-                                                     .collect( Collectors.toSet( ) );
+        
+        final Set<? extends Cell> children = layer.stream()
+                                                  .map( Cell::getCellChildren )
+                                                  .flatMap( Collection::stream )
+                                                  .collect( Collectors.toSet( ) );
         if( ! children.isEmpty() )
             getLayers( children );
 
@@ -38,7 +40,6 @@ public class HierarchicalLayout extends Layout{
 
     @Override
     public void execute(){
-        graph.beginUpdate();
         final Set<PriorKnowledgeCell >  tops = graph.getModel( )
                                                     .getTopCells( PriorKnowledgeCell.class );
         getLayers( tops );
@@ -53,6 +54,8 @@ public class HierarchicalLayout extends Layout{
                 final int x = ( j * 50 ) + margin; // 50 is cell width normally or use a max size finder
                 cell.relocate( x,y );
                 cell.getStyleClass().add( cssClass );
+                System.out.println( Integer.toString( x )+","+ Integer.toString( y ) );
+                j++;
             }
             i++;
         }

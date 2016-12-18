@@ -19,8 +19,8 @@ public class Edge extends Group {
         this.source = source;
         this.target = target;
 
-        source.addCellChild(target);
-        target.addCellParent(source);
+        source.addCellParent(target);
+        target.addCellChild(source);
 
         line = new Line();
 

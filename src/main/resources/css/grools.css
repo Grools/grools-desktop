@@ -6,3 +6,21 @@
 .zoomable_scroll_pane > .viewport {
    -fx-background-color: white;
 }
+
+.observation_cell {
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-fill: red;
+}
+
+.prior-knowledge_cell{
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-fill: yellow;
+}
+
+prior-knowledge_cell{
+    -fx-border-style: solid;
+    -fx-border-width: 1;
+    -fx-fill: yellow;
+}

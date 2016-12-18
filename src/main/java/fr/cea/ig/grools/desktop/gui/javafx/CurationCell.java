@@ -6,7 +6,7 @@ import lombok.NonNull;
 
 public class CurationCell extends Cell {
     public CurationCell( @NonNull String id ) {
-        super( id, new Circle( 50) );
+        super( id, new Circle( 10) );
         getStyleClass().add("observation_cell");
     }
 }

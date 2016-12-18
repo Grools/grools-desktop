@@ -50,9 +50,7 @@ public class Graph {
         rootLayer.getChildren().removeAll(model.getRemovedEdges());
 
         // enable dragging of cells
-        for (Cell cell : model.getAddedCells()) {
-            mouseGestures.makeDraggable(cell);
-        }
+        model.getAddedCells( ).forEach( mouseGestures::makeDraggable );
 
         // every cell must have a parent, if it doesn't, then the graphParent is
         // the parent

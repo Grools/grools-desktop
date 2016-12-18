@@ -12,11 +12,13 @@ import lombok.NonNull;
 public class Cell extends Pane {
 
     @Getter
-    protected final String     cellId;
-    protected final Set<Cell>  children;
-    protected final Set<Cell>  parents;
+    protected final String    cellId;
     @Getter
-    protected final Shape shape;
+    protected final Set<Cell> cellChildren;
+    @Getter
+    protected final Set<Cell> cellParents;
+    @Getter
+    protected final Shape     figure;
 
     public Cell(@NonNull final String id ) {
         this(id, null); // root node do not have a figure
@@ -25,29 +27,27 @@ public class Cell extends Pane {
 
     public Cell(@NonNull final String id, final Shape fig ) {
         cellId      = id;
-        shape       = fig;
-        children    = new HashSet<>();
-        parents     = new HashSet<>();
-        //getChildren().add(shape);
+        figure      = fig;
+        cellChildren= new HashSet<>();
+        cellParents = new HashSet<>();
+        if( figure != null)
+            getChildren().add(figure);
     }
 
     public void addCellChild(@NonNull final Cell cell) {
-        children.add(cell);
-    }
-
-    public Set<Cell> getCellChildren() {
-        return children;
+        cellChildren.add( cell );
     }
 
     public void addCellParent(@NonNull final Cell cell) {
-        parents.add(cell);
-    }
-
-    public Set<Cell> getCellParents() {
-        return parents;
+        cellParents.add( cell );
     }
 
     public void removeCellChild(@NonNull final Cell cell) {
-        children.remove(cell);
+        cellChildren.remove( cell );
+    }
+    
+    @Override
+    public String toString(){
+        return cellId;
     }
 }

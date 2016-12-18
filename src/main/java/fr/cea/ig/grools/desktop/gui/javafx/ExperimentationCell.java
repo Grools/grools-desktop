@@ -6,7 +6,7 @@ import lombok.NonNull;
 
 public class ExperimentationCell extends Cell {
     public ExperimentationCell( @NonNull String id ) {
-        super( id, new Ellipse( 50, 50) );
+        super( id, new Ellipse( 10, 10) );
         getStyleClass().add("observation_cell");
     }
 }

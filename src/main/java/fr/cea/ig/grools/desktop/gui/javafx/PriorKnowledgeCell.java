@@ -5,7 +5,7 @@ import lombok.NonNull;
 
 public class PriorKnowledgeCell extends Cell {
     public PriorKnowledgeCell( @NonNull String id ) {
-        super( id, new Rectangle( 50, 50) );
+        super( id, new Rectangle( 10, 10) );
         getStyleClass().add("prior-knowledge_cell");
     }
 }

@@ -1,5 +1,8 @@
 package fr.cea.ig.grools.desktop.gui;
 
+import fr.cea.ig.grools.desktop.gui.javafx.TabContainer;
+import fr.cea.ig.grools.desktop.gui.javafx.VisualizationTab;
+import fr.cea.ig.grools.fact.Concept;
 import fr.cea.ig.grools.fact.PriorKnowledge;
 import fr.cea.ig.grools.fact.Relation;
 import fr.cea.ig.grools.logic.TruthValueSet;
@@ -20,23 +23,19 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTablePosition;
 import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import fr.cea.ig.grools.reasoner.Reasoner;
 
 
-import javafx.util.Callback;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -50,71 +49,74 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 
-public class ResultTabContainer {
+public class ResultTabContainer implements TabContainer{
     private static final AtomicInteger counter = new AtomicInteger( );
 
     @Getter
-    private final long id;
+    private final long                                  id;
 
     @NonNull @Getter
-    private final Stage resultTabStage;
+    private final Stage                                 stage;
     
     @NonNull @Getter
-    private final Reasoner reasoner;
+    private final Reasoner                              reasoner;
 
     @NonNull @Getter
-    private final Tab                                       tab;
+    private final Tab                                   tab;
     
     @FXML
-    private ResourceBundle resources;
+    private ResourceBundle                              resources;
     
     @FXML
-    private URL location;
+    private URL                                         location;
     
     @FXML
-    private ScrollPane scrollPane;
+    private ScrollPane                                  scrollPane;
     
     @FXML @Getter
-    private TextField filterNameAndDescription;
+    private TextField                                   filterNameAndDescription;
     
     
     @FXML @Getter
-    private Menu filterPrediction;
+    private Menu                                        filterPrediction;
     
     @FXML @Getter
-    private Menu filterExpectation;
+    private Menu                                        filterExpectation;
     
     @FXML @Getter
-    private Menu filterConclusion;
+    private Menu                                        filterConclusion;
     
     @FXML @Getter
-    private TreeTableView<PriorKnowledgeRow>          tableView;
+    private TreeTableView<PriorKnowledgeRow>            tableView;
     
     @FXML
-    private TreeTableColumn<PriorKnowledgeRow,String> columnName;
+    private TreeTableColumn<PriorKnowledgeRow,String>   columnName;
     
     @FXML
-    private TreeTableColumn<PriorKnowledgeRow,String> columnDescription;
+    private TreeTableColumn<PriorKnowledgeRow,String>   columnDescription;
     
     @FXML
-    private TreeTableColumn<PriorKnowledgeRow,String> columnExpectation;
+    private TreeTableColumn<PriorKnowledgeRow,String>   columnExpectation;
     
     @FXML
-    private TreeTableColumn<PriorKnowledgeRow,String> columnApproximatedExpectation;
+    private TreeTableColumn<PriorKnowledgeRow,String>   columnApproximatedExpectation;
     
     @FXML
-    private TreeTableColumn<PriorKnowledgeRow,String> columnPrediction;
+    private TreeTableColumn<PriorKnowledgeRow,String>   columnPrediction;
     
     @FXML
-    private TreeTableColumn<PriorKnowledgeRow,String> columnApproximatedPrediction;
+    private TreeTableColumn<PriorKnowledgeRow,String>   columnApproximatedPrediction;
     
     @FXML
-    private TreeTableColumn<PriorKnowledgeRow,String> columnConclusion;
+    private TreeTableColumn<PriorKnowledgeRow,String>   columnConclusion;
     
-    private String lastValue;
+    private String                                      lastValue;
     
-    private final TreeItem<PriorKnowledgeRow> rootNode;
-    private final TabPane tabPane;
+    private final TreeItem<PriorKnowledgeRow>           rootNode;
+    
+    @Getter
+    private final TabPane                               tabPane;
+    
     private static TreeItem<PriorKnowledgeRow> priorKnowledgeToTreeItem( @NonNull final PriorKnowledge pk ){
         final PriorKnowledgeRow.PriorKnowledgeRowBuilder pkr = PriorKnowledgeRow.builder();
         pkr.name( pk.getName() );
@@ -301,15 +303,15 @@ public class ResultTabContainer {
         return text;
     }
     
-    public ResultTabContainer( @NonNull final Stage resultTabStage, @NonNull final TabPane tabPane, @NonNull final Reasoner reasoner ) {
+    public ResultTabContainer( @NonNull final Stage stage, @NonNull final TabPane tabPane, @NonNull final Reasoner reasoner ) {
         this.id                 = counter.incrementAndGet( );
-        this.resultTabStage     = resultTabStage;
+        this.stage              = stage;
         this.tabPane            = tabPane;
         this.reasoner           = reasoner;
         this.tab                = new Tab( "global results-"+Long.toString( id ) );
         this.rootNode           = new TreeItem<>();
         tab.setId( "global-results-tab-"+Long.toString( id ) );
-        //resultTabStage.show();
+        //stage.show();
     }
     
     @FXML
@@ -377,6 +379,16 @@ public class ResultTabContainer {
             final MenuItem      menuRemoveAPrediction   = new MenuItem( "Remove a prediction");
             final ContextMenu   rowMenu                 = new ContextMenu( menuVisualize, menuCopy, menuAddAnExpectation, menuRemoveAnExpectation, menuAddAPrediction, menuRemoveAPrediction );
 
+            menuVisualize.setOnAction( event -> {
+                final ObservableList< TreeTablePosition< PriorKnowledgeRow, ? > > observableList = treeTableView.getSelectionModel( ).getSelectedCells( );
+                final Set<Concept> roots = observableList.stream( )
+                                                         .map( TreeTablePosition::getTreeItem )
+                                                         .map( TreeItem::getValue )
+                                                         .map( pkr -> reasoner.getConcept( pkr.getName() ) )
+                                                         .collect( Collectors.toSet( ) );
+                final VisualizationTab visualizationTab = new VisualizationTab( stage, tabPane, reasoner, roots );
+            } );
+            
             menuCopy.setOnAction( event -> {
                 final ObservableList< TreeTablePosition< PriorKnowledgeRow, ? > > observableList = treeTableView.getSelectionModel( ).getSelectedCells( );
 //                final String toCopy = observableList.stream()
@@ -421,7 +433,7 @@ public class ResultTabContainer {
         } );
         
         columnDescription.setMinWidth( widthColumnDescription );
-        resultTabStage.getScene().widthProperty().addListener(  event  -> {
+        stage.getScene( ).widthProperty( ).addListener( event  -> {
             final double widthTotal =  columnName.getWidth()
                     + columnDescription.getWidth()
                     + columnExpectation.getWidth()
